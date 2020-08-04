@@ -1,7 +1,12 @@
-require('./config/config');
 const express = require('express');
+const mongoose = require('mongoose');
+require('./config/config');
 
 const app = express();
+require('./database/database');
+
+// ? ---Inicia Settings---
+app.set("port", process.env.PORT);
 
 // ? ---Inicia Middleware---
 app.use(express.urlencoded({
@@ -9,49 +14,10 @@ app.use(express.urlencoded({
 }));
 
 app.use(express.json());
-// ? ---Termina Middleware---
 
+// ? ---Inicia Routes---
+app.use(require('./routes/usuario'));
 
-app.get('/usuario', (req, res) => {
-    res.json('get Usuario');
-});
-
-app.post('/usuario', (req, res) => {
-
-    const { nombre, edad, correo } = req.body;
-
-    if (nombre === undefined) {
-
-        res.status(400).json({
-            ok: false,
-            message: 'The name is required'
-        });
-
-    } else {
-
-        res.json({
-            nombre,
-            edad,
-            correo
-        });
-
-    }
-
-});
-
-app.put('/usuario/:id', (req, res) => {
-
-    const { id } = req.params;
-    res.json({
-        id
-    });
-
-});
-
-app.delete('/usuario', (req, res) => {
-    res.json('delete Usuario');
-});
-
-app.listen(process.env.PORT, () => {
-    console.log(`Escuchando puerto ${process.env.PORT}`);
+app.listen(app.get('port'), () => {
+    console.log(`Escuchando puerto ${app.get('port')}`);
 });
