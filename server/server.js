@@ -16,7 +16,7 @@ app.use(express.urlencoded({
 app.use(express.json());
 
 // ? ---Inicia Routes---
-app.use(require('./routes/usuario'));
+app.use(require('./routes/index'));
 
 app.listen(app.get('port'), () => {
     console.log(`Escuchando puerto ${app.get('port')}`);

@@ -1,19 +1,20 @@
-const { Router, json } = require('express');
+const { Router } = require('express');
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
 
 const router = Router();
 
-router.get('/usuario', async (req, res) => {
+router.get('/usuario', verificaToken, async (req, res) => {
     const desde = Number(req.query.desde || 0);
     const limite = Number(req.query.limite || 5);
-    await Usuario.find({estado: true}, 'nombre email role estado google img')
+    await Usuario.find({ estado: true }, 'nombre email role estado google img')
         .skip(desde)
         .limit(limite)
         .exec()
         .then(async (usuarios) => {
-            await Usuario.countDocuments({estado: true})
+            await Usuario.countDocuments({ estado: true })
                 .then((cuantos) => {
                     res.json({
                         ok: true,
@@ -29,7 +30,7 @@ router.get('/usuario', async (req, res) => {
         });
 });
 
-router.post('/usuario', async (req, res) => {
+router.post('/usuario', [verificaToken, verificaAdmin_Role], async (req, res) => {
     const { nombre, email, password, role } = req.body;
     const usuario = new Usuario({
         nombre,
@@ -51,7 +52,7 @@ router.post('/usuario', async (req, res) => {
         });
 });
 
-router.put('/usuario/:id', async (req, res) => {
+router.put('/usuario/:id', [verificaToken, verificaAdmin_Role], async (req, res) => {
     // * lista blanca (o conjunto de claves válidas)
     const body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
     const { id } = req.params;
@@ -69,7 +70,7 @@ router.put('/usuario/:id', async (req, res) => {
         });
 });
 
-router.delete('/usuario/:id', async (req, res) => {
+router.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], async (req, res) => {
     const { id } = req.params;
     const cambiaEstado = {
         estado: false
