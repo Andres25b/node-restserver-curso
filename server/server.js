@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 require('./config/config');
 
 const app = express();
@@ -12,6 +13,9 @@ app.set("port", process.env.PORT);
 app.use(express.urlencoded({
     extended: false
 }));
+
+// ? --Habilitar la carpeta public
+app.use(express.static(path.resolve(__dirname, '../public')));
 
 app.use(express.json());
 
