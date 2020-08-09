@@ -6,6 +6,9 @@ const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticac
 
 const router = Router();
 
+// * ====================
+// *  Paginación Usuario
+// * ====================
 router.get('/usuario', verificaToken, async (req, res) => {
     const desde = Number(req.query.desde || 0);
     const limite = Number(req.query.limite || 5);
@@ -30,6 +33,9 @@ router.get('/usuario', verificaToken, async (req, res) => {
         });
 });
 
+// * ===============
+// *  Crear Usuario
+// * ===============
 router.post('/usuario', [verificaToken, verificaAdmin_Role], async (req, res) => {
     const { nombre, email, password, role } = req.body;
     const usuario = new Usuario({
@@ -52,6 +58,9 @@ router.post('/usuario', [verificaToken, verificaAdmin_Role], async (req, res) =>
         });
 });
 
+// * ====================
+// *  Actualizar Usuario
+// * ====================
 router.put('/usuario/:id', [verificaToken, verificaAdmin_Role], async (req, res) => {
     // * lista blanca (o conjunto de claves válidas)
     const body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -70,6 +79,9 @@ router.put('/usuario/:id', [verificaToken, verificaAdmin_Role], async (req, res)
         });
 });
 
+// * ====================
+// *  Desactivar Usuario
+// * ====================
 router.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], async (req, res) => {
     const { id } = req.params;
     const cambiaEstado = {

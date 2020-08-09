@@ -2,13 +2,15 @@ const { Router } = require('express');
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-//? -----
+
 const { OAuth2Client } = require('google-auth-library');
-const usuario = require('../models/usuario');
 const client = new OAuth2Client(process.env.CLIENT_ID);
 
 const router = Router();
 
+// * ==============
+// *  Login Normal
+// * ==============
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     await Usuario.findOne({ email })
@@ -65,6 +67,9 @@ async function verify(token) {
     }
 }
 
+// * ==============
+// *  Login Google
+// * ==============
 router.post('/google', async (req, res) => {
     const { idtoken } = req.body;
     const googleUser = await verify(idtoken)
@@ -103,7 +108,7 @@ router.post('/google', async (req, res) => {
                 });
             }
         } else {
-            // * Si el usuario no existe en nuestra BD
+            // ? Si el usuario no existe en nuestra BD
             const usuario = new Usuario();
             usuario.nombre = googleUser.nombre;
             usuario.email = googleUser.email;
